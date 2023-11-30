@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define MAX_RULES 10
+#define MAX_LEN 10
+
+struct ProductionRule {
+    char nonTerminal;
+    char production[MAX_LEN];
+};
+
+struct Grammar {
+    int numRules;
+    struct ProductionRule rules[MAX_RULES];
+};
+
+bool isAmbiguous(struct Grammar grammar) {
+    for (int i = 0; i < grammar.numRules; i++) {
+        for (int j = i + 1; j < grammar.numRules; j++) {
+            if (grammar.rules[i].nonTerminal == grammar.rules[j].nonTerminal &&
+                strcmp(grammar.rules[i].production, grammar.rules[j].production) != 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    struct Grammar myGrammar;
+
+
+    myGrammar.numRules = 4;
+
+    myGrammar.rules[0].nonTerminal = 'S';
+    strcpy(myGrammar.rules[0].production, "aSb");
+
+    myGrammar.rules[1].nonTerminal = 'S';
+    strcpy(myGrammar.rules[1].production, "ab");
+
+    myGrammar.rules[2].nonTerminal = 'A';
+    strcpy(myGrammar.rules[2].production, "a");
+
+    myGrammar.rules[3].nonTerminal = 'A';
+    strcpy(myGrammar.rules[3].production, "aA");
+
+    if (isAmbiguous(myGrammar)) {
+        printf("The grammar is ambiguous.\n");
+    } else {
+        printf("The grammar is not ambiguous.\n");
+    }
+
+    return 0;
+}
