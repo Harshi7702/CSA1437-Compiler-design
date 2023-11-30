@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_STACK 100
+#define MAX_INPUT 100
+struct Stack {
+    int items[MAX_STACK];
+    int top;
+};
+void initialize(struct Stack *stack) {
+    stack->top = -1;
+}
+void push(struct Stack *stack, int value) {
+    stack->items[++stack->top] = value;
+}
+int pop(struct Stack *stack) {
+    return stack->items[stack->top--];
+}
+void slrParser(char input[], int parsingTable[][5], char productions[][10]) {
+    struct Stack stack;
+    initialize(&stack);
+    push(&stack, 0);
+
+    int inputIndex = 0;
+
+    printf("Stack\t\tInput\t\tAction\n");
+    while (1) {
+        int currentState = stack.items[stack.top];
+        char currentSymbol = input[inputIndex];
+        int action = parsingTable[currentState][currentSymbol - 'a'];
+
+        if (action > 0) {
+            push(&stack, action);
+            inputIndex++;
+            printf("%s\t\t%s\t\tShift %d\n", productions[stack.items[0]], &input[inputIndex], action);
+        } else if (action < 0) {
+            int production = -action;
+            int reduceLength = strlen(productions[production]);
+
+            for (int i = 0; i < reduceLength; i++) {
+                pop(&stack);
+            }
+
+            currentState = stack.items[stack.top];
+            int gotoState = parsingTable[currentState][productions[production][0] - 'A'];
+            push(&stack, gotoState);
+            printf("%s\t\t%s\t\tReduce %s\n", productions[stack.items[0]], &input[inputIndex], productions[production]);
+        } else 
+            if (action == 0) {
+                printf("%s\t\t%s\t\tAccept\n", productions[stack.items[0]], &input[inputIndex]);
+            } else {
+                printf("Error in parsing!\n");
+            }
+            break;
+        }
+    }
+}
+
+int main() {
+    int parsingTable[5][5] = {
+        {1, 0, 0, 0, 0},
+        {0, -1, 2, 0, -1},
+        {0, -3, 0, 0, -3},
+        {0, 0, 0, 4, 0},
+        {0, -2, 0, 0, -2}
+    };
+
+    char productions[][10] = {
+        "S", "S", "A", "Aa", "Bb"
+    };
+
+    char input[MAX_INPUT];
+    printf("Enter the input string: ");
+    scanf("%s", input);
+    slrParser(input, parsingTable, productions);
+
+    return 0;
+}
