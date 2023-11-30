@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int main() {
+    int x = 5;
+    int y = 10;
+    
+    // Dead code: This block will be eliminated
+    if (x > y) {
+        printf("x is greater than y\n");
+    } else {
+        printf("y is greater than or equal to x\n");
+    }
+    
+    // Live code: This block will be kept
+    printf("Sum of x and y is: %d\n", x + y);
+
+    return 0;
+}
