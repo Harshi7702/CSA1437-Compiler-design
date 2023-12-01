@@ -1,0 +1,17 @@
+%{
+#include <stdio.h>
+%}
+
+digit [0-9]
+
+%%
+
+{digit}+    { printf("Input is a digit: %s\n", yytext); }
+.           { printf("Input is not a digit: %s\n", yytext); }
+
+%%
+
+int main() {
+    yylex();
+    return 0;
+}
