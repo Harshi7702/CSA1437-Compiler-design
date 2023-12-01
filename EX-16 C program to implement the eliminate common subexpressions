@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char* expression;
+    char* result;
+    int eliminated;
+} Subexpression;
+
+Subexpression subexpressions[100];
+int subexpressionCount = 0;
+
+// Function to check if two expressions are the same
+int areEqual(char* expr1, char* expr2) {
+    return strcmp(expr1, expr2) == 0;
+}
+
+// Function to eliminate common subexpressions
+void eliminateCommonSubexpressions() {
+    for (int i = 0; i < subexpressionCount; ++i) {
+        if (!subexpressions[i].eliminated) {
+            for (int j = i + 1; j < subexpressionCount; ++j) {
+                if (!subexpressions[j].eliminated && areEqual(subexpressions[i].expression, subexpressions[j].expression)) {
+                    subexpressions[j].eliminated = 1;
+                    printf("Common subexpression eliminated: %s\n", subexpressions[j].expression);
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    // Example expressions
+    subexpressions[subexpressionCount++] = (Subexpression){"a + b", "temp1", 0};
+    subexpressions[subexpressionCount++] = (Subexpression){"c * d", "temp2", 0};
+    subexpressions[subexpressionCount++] = (Subexpression){"a + b", "temp3", 0};
+    subexpressions[subexpressionCount++] = (Subexpression){"e - f", "temp4", 0};
+
+    // Print original expressions
+    printf("Original expressions:\n");
+    for (int i = 0; i < subexpressionCount; ++i) {
+        printf("%s = %s\n", subexpressions[i].result, subexpressions[i].expression);
+    }
+
+    // Eliminate common subexpressions
+    eliminateCommonSubexpressions();
+
+    // Print expressions after elimination
+    printf("\nExpressions after common subexpression elimination:\n");
+    for (int i = 0; i < subexpressionCount; ++i) {
+        if (!subexpressions[i].eliminated) {
+            printf("%s = %s\n", subexpressions[i].result, subexpressions[i].expression);
+        }
+    }
+
+    return 0;
+}
